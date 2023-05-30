@@ -1,17 +1,22 @@
-import {Typography} from 'components/Typography';
 import React from 'react';
-import {View} from 'react-native';
 import ReactNativeModal from 'react-native-modal';
+import {View} from 'react-native';
 
-export const Modal = ({onClose, closeOnSwipe = true, children, title}) => {
+import {Typography} from 'components/Typography';
+
+export const Modal = ({
+  onClose,
+  closeOnSwipe = true,
+  children,
+  title,
+  HeaderIconComponent,
+}) => {
   return (
     <ReactNativeModal
       isVisible={true}
-      //   transparent={true}
       style={{margin: 0}}
       propagateSwipe
       hideModalContentWhileAnimating
-      // useNativeDriver
       swipeDirection={closeOnSwipe ? 'down' : []}
       onSwipeComplete={onClose}
       backdropTransitionInTiming={500}
@@ -23,8 +28,9 @@ export const Modal = ({onClose, closeOnSwipe = true, children, title}) => {
       panResponderThreshold={400}>
       <View className="flex justify-end items-center w-full h-full">
         <View className="relative w-full h-[90%] bg-slate-50 p-4 rounded-2xl">
-          <View className="flex w-full items-start">
+          <View className="flex flex-row w-full justify-between items-center">
             <Typography type="title2">{title}</Typography>
+            {HeaderIconComponent && HeaderIconComponent}
           </View>
           {children}
         </View>

@@ -17,7 +17,7 @@ export const Layout: FC<IProps> = ({children}) => {
       style={{
         height,
         paddingTop: 24,
-        paddingBottom: insets.bottom + 16,
+        // paddingBottom: insets.bottom + 16,
       }}>
       {children}
     </View>

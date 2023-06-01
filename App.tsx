@@ -14,6 +14,7 @@ import {Total} from 'components/Total';
 import {Controls} from 'components/Controls';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {RecordRealmContext} from 'src/db';
+import {Main} from 'src/screens/main';
 
 function App(): JSX.Element {
   const {RealmProvider} = RecordRealmContext;
@@ -23,18 +24,14 @@ function App(): JSX.Element {
       <SafeAreaProvider>
         <SafeAreaView edges={['right', 'left']}>
           <StatusBar backgroundColor={'transparent'} />
-          {/* <ScrollView style={{backgroundColor: '#ffedd5'}}> */}
           <View className="flex h-full">
             <Layout>
-              <Header
+              <Main
                 setSelectedDate={setSelectedDate}
                 selectedDate={selectedDate}
               />
-              <Total selectedDate={selectedDate} />
-              <Controls />
             </Layout>
           </View>
-          {/* </ScrollView> */}
         </SafeAreaView>
       </SafeAreaProvider>
     </RealmProvider>

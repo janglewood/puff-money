@@ -20,7 +20,7 @@ export const GridButton: ListRenderItem<IGridButton & {selected?: boolean}> = ({
       }`}
       onPress={onPress}>
       <View className="flex items-center p-1">
-        {Icon && <Icon width={32} height={32} color="gray" />}
+        {Icon && <Icon width={32} height={32} color="rgb(71 85 105)" />}
         <Typography
           type={Icon ? 'title4' : 'title2'}
           classname="mt-1 overflow-hidden"

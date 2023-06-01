@@ -46,79 +46,74 @@ const formatData = (data: IGridButton[], numColumns: number) => {
   return data;
 };
 
+export const categoriesConfig = [
+  {
+    id: 'food',
+    value: 'Food',
+    Icon: BasketIcon,
+  },
+  {
+    id: 'home',
+    value: 'Home',
+    Icon: HomeIcon,
+  },
+  {
+    id: 'cafe',
+    value: 'Cafe',
+    Icon: RestaurantIcon,
+  },
+  {
+    id: 'car',
+    value: 'Car',
+    Icon: CarIcon,
+  },
+  {
+    id: 'clothes',
+    value: 'Clothes',
+    Icon: TShirtIcon,
+  },
+  {
+    id: 'vacation',
+    value: 'Vacation',
+    Icon: TreeIcon,
+  },
+  {
+    id: 'gifts',
+    value: 'Gifts',
+    Icon: GiftIcon,
+  },
+  {
+    id: 'bills',
+    value: 'Bills',
+    Icon: ReceiptIcon,
+  },
+  {
+    id: 'sport',
+    value: 'Sport',
+    Icon: BasketballIcon,
+  },
+  {
+    id: 'taxi',
+    value: 'Taxi',
+    Icon: TaxiIcon,
+  },
+  {
+    id: 'transport',
+    value: 'Transportasdasd',
+    Icon: BusIcon,
+  },
+];
+
 export const Categories: FC<ICategoriesProps> = ({
   handleAddRecord,
   selectedCategoryId,
 }) => {
   const config: IGridButton[] = useMemo(
-    () => [
-      {
-        id: 'food',
-        value: 'Food',
-        onPress: () => handleAddRecord('food'),
-        Icon: BasketIcon,
-      },
-      {
-        id: 'home',
-        value: 'Home',
-        onPress: () => handleAddRecord('home'),
-        Icon: HomeIcon,
-      },
-      {
-        id: 'cafe',
-        value: 'Cafe',
-        onPress: () => handleAddRecord('cafe'),
-        Icon: RestaurantIcon,
-      },
-      {
-        id: 'car',
-        value: 'Car',
-        onPress: () => handleAddRecord('car'),
-        Icon: CarIcon,
-      },
-      {
-        id: 'clothes',
-        value: 'Clothes',
-        onPress: () => handleAddRecord('clothes'),
-        Icon: TShirtIcon,
-      },
-      {
-        id: 'vacation',
-        value: 'Vacation',
-        onPress: () => handleAddRecord('vacation'),
-        Icon: TreeIcon,
-      },
-      {
-        id: 'gifts',
-        value: 'Gifts',
-        onPress: () => handleAddRecord('gifts'),
-        Icon: GiftIcon,
-      },
-      {
-        id: 'bills',
-        value: 'Bills',
-        onPress: () => handleAddRecord('bills'),
-        Icon: ReceiptIcon,
-      },
-      {
-        id: 'sport',
-        value: 'Sport',
-        onPress: () => handleAddRecord('sport'),
-        Icon: BasketballIcon,
-      },
-      {
-        id: 'taxi',
-        value: 'Taxi',
-        onPress: () => handleAddRecord('taxi'),
-        Icon: TaxiIcon,
-      },
-      {
-        id: 'transport',
-        value: 'Transportasdasd',
-        onPress: () => handleAddRecord('transport'),
-        Icon: BusIcon,
-      },
-    ],
+    () =>
+      categoriesConfig.map(item => ({
+        ...item,
+        onPress: () => handleAddRecord(item.id),
+      })),
     [handleAddRecord],
   );
 

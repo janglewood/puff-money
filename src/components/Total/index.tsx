@@ -1,6 +1,6 @@
-import React, {useMemo, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
-import dayjs from 'dayjs';
+import React, {FC, useMemo, useState} from 'react';
+import {View} from 'react-native';
+import groupBy from 'lodash.groupby';
 
 import {RecordRealmContext} from 'src/db';
 import {Record} from 'src/db/models/Record';
@@ -9,31 +9,39 @@ import {Typography} from 'components/Typography';
 import {RecordModal} from 'components/RecordModal';
 
 import ArrowIcon from 'assets/icons/arrow.svg';
+import {RecordsList} from './components/RecordsList';
 
-export const Total = () => {
-  const [currentMonth, setCurrentMonth] = useState<number>(
-    new Date().getMonth(),
-  );
+interface IProps {
+  selectedDate: Date;
+}
+
+export const Total: FC<IProps> = ({selectedDate}) => {
   const [editingItemId, setEditingItemId] = useState<null | string>(null);
 
   const {useQuery} = RecordRealmContext;
   const result = useQuery(Record).sorted('date', true);
 
-  const income = result
-    .filtered('amount > 0')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-  const outcome = result
-    .filtered('amount < 0')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-
   const monthResults = useMemo(
-    () => result.filter(({date}) => new Date(date).getMonth() === currentMonth),
-    [currentMonth, result],
+    () =>
+      result.filter(
+        ({date}) =>
+          new Date(date).getMonth() === new Date(selectedDate).getMonth(),
+      ),
+    [selectedDate, result],
   );
 
+  const recordsByCategories = groupBy(monthResults, 'categoryId');
+
+  const income = monthResults
+    .filter(({amount}) => amount > 0)
+    .reduce((acc, curr) => acc + curr.amount, 0);
+  const outcome = monthResults
+    .filter(({amount}) => amount < 0)
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
   const editingItem = useMemo(
-    () => result.find(({_id}) => _id === editingItemId),
-    [editingItemId, result],
+    () => monthResults.find(({_id}) => _id === editingItemId),
+    [editingItemId, monthResults],
   );
 
   return (
@@ -82,16 +90,37 @@ export const Total = () => {
           </View>
         </View>
       </View>
-      <View>
-        {monthResults.map(({_id, amount, date, categoryId}) => {
-          return (
-            <TouchableOpacity onPress={() => setEditingItemId(_id)}>
-              <Typography type="body1" key={_id}>{`${amount} --- ${dayjs(
-                date,
-              ).format('DD-MM-YYYY')} --- ${categoryId}`}</Typography>
-            </TouchableOpacity>
-          );
-        })}
+      <View className="px-6 my-4">
+        <RecordsList
+          data={recordsByCategories}
+          setEditingItemId={setEditingItemId}
+        />
+        {/* <FlatList
+          data={Object.keys(recordsByCategories)}
+          renderItem={({item}) => {
+            const recordsAmount = recordsByCategories[item].length;
+            return (
+              <View className="flex flex-row w-full items-center">
+                <View className="flex flex-row w-[24px] h-[24px]">
+                  <ChevronIcon
+                    width="100%"
+                    height="100%"
+                    color="rgb(71 85 105)"
+                  />
+                </View>
+                <Typography type="title3">{`${item} (${recordsAmount})`}</Typography>
+                <View className="flex-1 w-full justify-end items-end">
+                  <Typography type="body1">
+                    {recordsByCategories[item]
+                      .reduce((acc, curr) => acc + Math.abs(curr.amount), 0)
+                      .toFixed(2)}
+                  </Typography>
+                </View>
+              </View>
+            );
+          }}
+          keyExtractor={item => item}
+        /> */}
       </View>
       {editingItem && (
         <RecordModal

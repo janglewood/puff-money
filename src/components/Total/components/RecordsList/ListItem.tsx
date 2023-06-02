@@ -25,7 +25,7 @@ import ChevronIcon from 'assets/icons/chevron.svg';
 interface IProps {
   data: Record[];
   categoryId: Record['categoryId'];
-  setEditingItemId: Dispatch<SetStateAction<Record['categoryId']>>;
+  setEditingItemId: Dispatch<SetStateAction<Record['categoryId'] | null>>;
 }
 
 export const ListItem: FC<IProps> = ({data, categoryId, setEditingItemId}) => {

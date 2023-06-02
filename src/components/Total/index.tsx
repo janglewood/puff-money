@@ -1,22 +1,66 @@
-import React, {FC, useMemo, useState} from 'react';
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {View} from 'react-native';
 import groupBy from 'lodash.groupby';
+import SwitchSelector from 'react-native-switch-selector';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {RecordRealmContext} from 'src/db';
 import {Record} from 'src/db/models/Record';
 
 import {Typography} from 'components/Typography';
 import {RecordModal} from 'components/RecordModal';
+import {RecordsList} from './components/RecordsList';
 
 import ArrowIcon from 'assets/icons/arrow.svg';
-import {RecordsList} from './components/RecordsList';
+import ListIcon from 'assets/icons/list-ul.svg';
+import ChartIcon from 'assets/icons/pie-chart.svg';
 
 interface IProps {
   selectedDate: Date;
 }
 
+interface SwitchOption {
+  label: string;
+  value: 'list' | 'chart';
+  customIcon: ReactNode;
+}
+const viewSwitchOptions: SwitchOption[] = [
+  {
+    label: '',
+    value: 'list',
+    customIcon: <ListIcon width={24} color="rgb(71 85 105)" />,
+  },
+  {
+    label: '',
+    value: 'chart',
+    customIcon: <ChartIcon width={24} color="rgb(71 85 105)" />,
+  },
+];
+
+const getRecordsView = async () => await AsyncStorage.getItem('recordsView');
+
 export const Total: FC<IProps> = ({selectedDate}) => {
   const [editingItemId, setEditingItemId] = useState<null | string>(null);
+  const [recordsView, setRecordsView] = useState<SwitchOption['value']>();
+
+  useEffect(() => {
+    (async () => {
+      const view = await getRecordsView();
+      if (!view) {
+        setRecordsView(viewSwitchOptions[1].value);
+        AsyncStorage.setItem('recordsView', viewSwitchOptions[1].value);
+      } else {
+        setRecordsView(view as SwitchOption['value']);
+      }
+    })();
+  }, []);
 
   const {useQuery} = RecordRealmContext;
   const result = useQuery(Record).sorted('date', true);
@@ -43,6 +87,11 @@ export const Total: FC<IProps> = ({selectedDate}) => {
     () => monthResults.find(({_id}) => _id === editingItemId),
     [editingItemId, monthResults],
   );
+
+  const handleSwitch = useCallback((value: SwitchOption['value']) => {
+    setRecordsView(value);
+    AsyncStorage.setItem('recordsView', value);
+  }, []);
 
   return (
     <>
@@ -90,37 +139,32 @@ export const Total: FC<IProps> = ({selectedDate}) => {
           </View>
         </View>
       </View>
+      <View className="flex flex-row justify-end items-center py-4 px-4">
+        <Typography type="body2" classname="mr-2">
+          View:
+        </Typography>
+        {recordsView && (
+          <SwitchSelector
+            options={viewSwitchOptions}
+            buttonColor="rgb(251 146 60)"
+            animationDuration={300}
+            style={{width: 100}}
+            hasPadding
+            borderColor="transparent"
+            valuePadding={1}
+            height={35}
+            initial={viewSwitchOptions.findIndex(
+              ({value}) => value === recordsView,
+            )}
+            onPress={handleSwitch}
+          />
+        )}
+      </View>
       <View className="px-6 my-4">
         <RecordsList
           data={recordsByCategories}
           setEditingItemId={setEditingItemId}
         />
-        {/* <FlatList
-          data={Object.keys(recordsByCategories)}
-          renderItem={({item}) => {
-            const recordsAmount = recordsByCategories[item].length;
-            return (
-              <View className="flex flex-row w-full items-center">
-                <View className="flex flex-row w-[24px] h-[24px]">
-                  <ChevronIcon
-                    width="100%"
-                    height="100%"
-                    color="rgb(71 85 105)"
-                  />
-                </View>
-                <Typography type="title3">{`${item} (${recordsAmount})`}</Typography>
-                <View className="flex-1 w-full justify-end items-end">
-                  <Typography type="body1">
-                    {recordsByCategories[item]
-                      .reduce((acc, curr) => acc + Math.abs(curr.amount), 0)
-                      .toFixed(2)}
-                  </Typography>
-                </View>
-              </View>
-            );
-          }}
-          keyExtractor={item => item}
-        /> */}
       </View>
       {editingItem && (
         <RecordModal

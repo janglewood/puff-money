@@ -8,7 +8,7 @@ import {Typography} from 'components/Typography';
 
 interface IProps {
   data: {[key: Record['categoryId']]: Record[]};
-  setEditingItemId: Dispatch<SetStateAction<Record['categoryId']>>;
+  setEditingItemId: Dispatch<SetStateAction<Record['categoryId'] | null>>;
 }
 
 export const RecordsList: FC<IProps> = ({data, setEditingItemId}) => (

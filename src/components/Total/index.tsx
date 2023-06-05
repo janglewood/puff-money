@@ -21,6 +21,8 @@ import {RecordsList} from './components/RecordsList';
 import ArrowIcon from 'assets/icons/arrow.svg';
 import ListIcon from 'assets/icons/list-ul.svg';
 import ChartIcon from 'assets/icons/pie-chart.svg';
+import {RecordsChart} from './components/RecordsChart';
+import {categoriesConfig} from 'components/Controls/components/Categories';
 
 interface IProps {
   selectedDate: Date;
@@ -87,6 +89,24 @@ export const Total: FC<IProps> = ({selectedDate}) => {
     () => monthResults.find(({_id}) => _id === editingItemId),
     [editingItemId, monthResults],
   );
+
+  const chartData = useMemo(() => {
+    const data = [];
+    categoriesConfig.forEach(({id, value}) => {
+      if (recordsByCategories[id]?.length) {
+        data.push({
+          x: value,
+          y: recordsByCategories[id]
+            ? recordsByCategories[id].reduce(
+                (acc, curr) => acc + Math.abs(curr.amount),
+                0,
+              )
+            : 0,
+        });
+      }
+    });
+    return data;
+  }, [recordsByCategories]);
 
   const handleSwitch = useCallback((value: SwitchOption['value']) => {
     setRecordsView(value);
@@ -160,12 +180,30 @@ export const Total: FC<IProps> = ({selectedDate}) => {
           />
         )}
       </View>
-      <View className="px-6 my-4">
-        <RecordsList
-          data={recordsByCategories}
-          setEditingItemId={setEditingItemId}
-        />
-      </View>
+      {Object.keys(recordsByCategories).length ? (
+        <View
+          className="px-6 my-4"
+          onLayout={event => {
+            const {width, height} = event.nativeEvent.layout;
+
+            console.log('----', height);
+            // setW(width);
+            // setH(height);
+          }}>
+          {recordsView === 'list' ? (
+            <RecordsList
+              data={recordsByCategories}
+              setEditingItemId={setEditingItemId}
+            />
+          ) : (
+            <RecordsChart data={chartData} total={outcome} />
+          )}
+        </View>
+      ) : (
+        <View className="items-center my-8">
+          <Typography type="title3">No Records for this month</Typography>
+        </View>
+      )}
       {editingItem && (
         <RecordModal
           onClose={() => setEditingItemId(null)}

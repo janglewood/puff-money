@@ -24,7 +24,7 @@ function App(): JSX.Element {
       <SafeAreaProvider>
         <SafeAreaView edges={['right', 'left']}>
           <StatusBar backgroundColor={'transparent'} />
-          <View className="flex h-full">
+          <View className="h-full">
             <Layout>
               <Main
                 setSelectedDate={setSelectedDate}

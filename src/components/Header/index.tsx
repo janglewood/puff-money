@@ -41,7 +41,7 @@ export const Header: FC<IProps> = ({setSelectedDate, selectedDate}) => {
   const results = useQuery(Record).sorted('date', true);
 
   const pickerDates = useMemo(
-    () => getPickerDates(results[results.length - 1].date),
+    () => getPickerDates(results[results.length - 1]?.date),
     [results],
   );
 

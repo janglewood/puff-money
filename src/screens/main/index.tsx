@@ -12,8 +12,16 @@ interface IProps {
 
 export const Main: FC<IProps> = ({setSelectedDate, selectedDate}) => {
   return (
-    <View className="flex flex-1 justify-between">
-      <View>
+    <View
+      className="flex flex-1 justify-between"
+      onLayout={event => {
+        const {width, height} = event.nativeEvent.layout;
+
+        console.log('TOTAL HEIGHT:', height);
+        // setW(width);
+        // setH(height);
+      }}>
+      <View className="flex-1">
         <Header setSelectedDate={setSelectedDate} selectedDate={selectedDate} />
         <Total selectedDate={selectedDate} />
       </View>

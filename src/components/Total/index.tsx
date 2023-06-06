@@ -181,15 +181,7 @@ export const Total: FC<IProps> = ({selectedDate}) => {
         )}
       </View>
       {Object.keys(recordsByCategories).length ? (
-        <View
-          className="px-6 my-4"
-          onLayout={event => {
-            const {width, height} = event.nativeEvent.layout;
-
-            console.log('----', height);
-            // setW(width);
-            // setH(height);
-          }}>
+        <View className="px-6 my-4">
           {recordsView === 'list' ? (
             <RecordsList
               data={recordsByCategories}

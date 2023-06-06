@@ -22,17 +22,17 @@ function App(): JSX.Element {
   return (
     <RealmProvider>
       <SafeAreaProvider>
-        <SafeAreaView edges={['right', 'left']}>
-          <StatusBar backgroundColor={'transparent'} />
-          <View className="h-full">
-            <Layout>
-              <Main
-                setSelectedDate={setSelectedDate}
-                selectedDate={selectedDate}
-              />
-            </Layout>
-          </View>
-        </SafeAreaView>
+        {/* <SafeAreaView edges={['right', 'left']}> */}
+        <StatusBar backgroundColor={'transparent'} />
+        <View className="flex-1 h-full">
+          <Layout>
+            <Main
+              setSelectedDate={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+          </Layout>
+        </View>
+        {/* </SafeAreaView> */}
       </SafeAreaProvider>
     </RealmProvider>
   );

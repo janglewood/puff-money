@@ -13,11 +13,11 @@ export const Layout: FC<IProps> = ({children}) => {
 
   return (
     <View
-      className={`flex flex-1 flex-col bg-orange-100`}
+      className="flex flex-1 flex-col bg-orange-100"
       style={{
-        height,
+        // height,
         paddingTop: 24,
-        paddingBottom: insets.bottom + 16,
+        // paddingBottom: insets.bottom + 16,
       }}>
       {children}
     </View>

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {FC, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {Animated, Pressable} from 'react-native';
 
 import {Typography} from 'components/Typography';
 import {RecordModal} from 'components/RecordModal';
@@ -17,22 +17,38 @@ export interface IGridButton {
 export const Controls = () => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   const [recordType, setRecordType] = useState<'income' | 'outcome'>('outcome');
+  const [scaleValue] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    scaleValue.setValue(1);
+  }, [scaleValue]);
+
+  const handleOnPress = () => {
+    setIsModalOpened(true);
+    scaleValue.setValue(0.9);
+    Animated.spring(scaleValue, {
+      toValue: 1,
+      bounciness: 16,
+      speed: 16,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
     <>
-      <View className="flex flex-1 flex-row items-end justify-center w-full px-6">
-        <TouchableOpacity
-          className="flex items-center justify-center w-[100px] h-[100px] bg-slate-100 rounded-xl p-6 border border-solid border-orange-400 w-fit"
-          onPress={() => setIsModalOpened(true)}>
-          <View className="flex items-center justify-center">
-            <Typography
-              type="title1"
-              classname="text-[#4d7c0f] text-[60px] leading-[60px]">
-              +
-            </Typography>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <Animated.View
+        style={[{transform: [{scale: scaleValue}]}]}
+        className="absolute top-[-30px] flex flex-1 flex-row items-end justify-center w-full px-6">
+        <Pressable
+          className="flex items-center justify-center w-[80px] h-[80px] bg-orange-600 rounded-full border border-4 border-slate-100"
+          onPress={handleOnPress}>
+          <Typography
+            type="title1"
+            classname="text-orange-100 text-[50px] leading-[70px] text-center">
+            $
+          </Typography>
+        </Pressable>
+      </Animated.View>
       {isModalOpened && (
         <RecordModal
           onClose={() => setIsModalOpened(false)}

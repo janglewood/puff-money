@@ -2,9 +2,9 @@
 
 #import "AppDelegate.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char *argvq[])
 {
   @autoreleasepool {
-    return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    return UIApplicationMain(argc, argvq, nil, NSStringFromClass([AppDelegate class]));
   }
 }

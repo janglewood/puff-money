@@ -1,6 +1,8 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {Animated, TouchableOpacity, View} from 'react-native';
 import {v4 as uuidv4} from 'uuid';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import dayjs from 'dayjs';
 
 import {RecordRealmContext} from 'src/db';
 import {Record} from 'src/db/models/Record';
@@ -13,6 +15,7 @@ import {Calculator} from 'components/Controls/components/Calculator';
 
 import DeleteIcon from 'assets/icons/delete.svg';
 import TrashIcon from 'assets/icons/trash.svg';
+import CaretIcon from 'assets/icons/caret-down.svg';
 
 type RecordType = 'income' | 'outcome';
 
@@ -32,6 +35,10 @@ export const RecordModal: FC<IProps> = ({
   const [recordUnderlineWidth, setRecordUnderlineWidth] = useState<number>(0);
   const [animatedRecordValue] = useState(new Animated.Value(50));
   const [isCategoryOpened, setIsCategoryOpened] = useState(false);
+  const [date, setDate] = useState(
+    editingItem ? new Date(editingItem.date) : new Date(),
+  );
+  const [isDatePickerOpened, setIsDatePickerOpened] = useState(false);
 
   const realm = RecordRealmContext.useRealm();
 
@@ -152,11 +159,7 @@ export const RecordModal: FC<IProps> = ({
   );
 
   const handleUpdateRecord = useCallback(
-    async (
-      categoryId: Record['categoryId'],
-      note: Record['note'],
-      date: Record['date'],
-    ) => {
+    async (categoryId: Record['categoryId'], note: Record['note']) => {
       if (!monitor || !editingItem) {
         return;
       }
@@ -169,7 +172,7 @@ export const RecordModal: FC<IProps> = ({
       });
       onClose();
     },
-    [realm, monitor, editingItem, recordType, onClose],
+    [monitor, editingItem, realm, onClose, recordType, date],
   );
 
   const handleDeleteRecord = useCallback(async () => {
@@ -182,14 +185,17 @@ export const RecordModal: FC<IProps> = ({
   return (
     <Modal
       onClose={onClose}
+      closeOnSwipe
       title={editingItem ? 'Edit' : 'Add new'}
       HeaderIconComponent={
-        <TouchableOpacity onPress={handleDeleteRecord}>
-          <TrashIcon width={32} height={32} color="#eb1b26" />
-        </TouchableOpacity>
+        editingItem && (
+          <TouchableOpacity onPress={handleDeleteRecord}>
+            <TrashIcon width={32} height={32} color="#eb1b26" />
+          </TouchableOpacity>
+        )
       }>
       <View className="flex flex-1 justify-start">
-        {!editingItem && (
+        {!editingItem ? (
           <>
             <View className="flex flex-row justify-between items-center w-full mt-6">
               <TouchableOpacity
@@ -232,10 +238,21 @@ export const RecordModal: FC<IProps> = ({
               />
             </View>
           </>
+        ) : (
+          <TouchableOpacity
+            onPress={() => setIsDatePickerOpened(true)}
+            className="flex items-start w-full my-1">
+            <View className="flex flex-row items-center justify-start">
+              <Typography type="body1" classname="mr-2">
+                {dayjs(date).format('DD MMM YYYY')}
+              </Typography>
+              <CaretIcon width={16} height={16} color="rgb(71 85 105)" />
+            </View>
+          </TouchableOpacity>
         )}
 
         <View className="flex w-full my-4">
-          <View className="flex flex-row justify-end items-center border border-solid border-orange-300 bg-orange-50 rounded p-4">
+          <View className="flex flex-row justify-end items-start border border-solid border-orange-300 bg-orange-50 rounded py-3 px-4">
             <Typography type="title2">{monitor}</Typography>
             <TouchableOpacity
               onPress={() =>
@@ -272,6 +289,21 @@ export const RecordModal: FC<IProps> = ({
             <Typography type="button1">Choose category</Typography>
           </Button>
         </View>
+        {isDatePickerOpened && (
+          <DateTimePickerModal
+            testID="dateTimePicker"
+            isVisible
+            date={date}
+            display="spinner"
+            mode="date"
+            maximumDate={new Date()}
+            onCancel={() => setIsDatePickerOpened(false)}
+            onConfirm={selectedDate => {
+              setDate(selectedDate);
+              setIsDatePickerOpened(false);
+            }}
+          />
+        )}
       </View>
     </Modal>
   );

@@ -6,7 +6,7 @@
  */
 
 import React, {useCallback, useState} from 'react';
-import {ScrollView, StatusBar, useColorScheme} from 'react-native';
+import {ScrollView, StatusBar, View, useColorScheme} from 'react-native';
 
 import {Header} from 'components/Header';
 import {Layout} from 'components/Layout';
@@ -14,35 +14,25 @@ import {Total} from 'components/Total';
 import {Controls} from 'components/Controls';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {RecordRealmContext} from 'src/db';
+import {Main} from 'src/screens/main';
 
 function App(): JSX.Element {
-  const [income, setIncome] = useState(0);
-  const [outcome, setOutcome] = useState(0);
-
-  const increase = useCallback(
-    (value: number) => setIncome(prev => prev + value),
-    [setIncome],
-  );
-  const decrease = useCallback(
-    (value: number) => setOutcome(prev => prev + value),
-    [setOutcome],
-  );
-
   const {RealmProvider} = RecordRealmContext;
-
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   return (
     <RealmProvider>
       <SafeAreaProvider>
-        <SafeAreaView edges={['right', 'left']}>
-          <StatusBar backgroundColor={'transparent'} />
-          <ScrollView style={{backgroundColor: '#ffedd5'}}>
-            <Layout>
-              <Header />
-              <Total />
-              <Controls />
-            </Layout>
-          </ScrollView>
-        </SafeAreaView>
+        {/* <SafeAreaView edges={['right', 'left']}> */}
+        <StatusBar backgroundColor={'transparent'} />
+        <View className="flex-1 h-full">
+          <Layout>
+            <Main
+              setSelectedDate={setSelectedDate}
+              selectedDate={selectedDate}
+            />
+          </Layout>
+        </View>
+        {/* </SafeAreaView> */}
       </SafeAreaProvider>
     </RealmProvider>
   );
